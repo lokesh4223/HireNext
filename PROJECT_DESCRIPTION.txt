@@ -1,0 +1,1 @@
+HireNext is a job portal application built with React, Vite, and Firebase. It connects job seekers with employers through role-based access for candidates, recruiters, companies, and colleges. Features include Google OAuth integration, responsive design, and mock API mode for local development.

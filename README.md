@@ -1,6 +1,6 @@
 # HireNext - Job Portal Application
 
-A comprehensive job portal application built with React, Vite, and Firebase authentication. This application supports multiple user roles including job seekers, recruiters, companies, and colleges.
+A comprehensive job portal application built with React, Vite, and Firebase authentication. This application connects job seekers with employers, offering role-based access for candidates, recruiters, companies, and colleges. Features include Google OAuth integration, responsive design, and mock API mode for local development.
 
 ## Table of Contents
 

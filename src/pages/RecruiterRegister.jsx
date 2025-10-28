@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import Logo from "../components/Logo";
 import { Link, useNavigate } from "react-router-dom";
 import { useUserContext } from "../context/UserContext";
 import { useForm } from "react-hook-form";
@@ -10,6 +9,9 @@ import "react-toastify/dist/ReactToastify.css";
 import { FcGoogle } from "react-icons/fc";
 import { signInWithGoogle } from "../utils/googleAuth";
 import { SYSTEM_CONFIG } from "../config/system-config";
+import { auth } from "../firebase";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import SplitLoginLayout from "../components/shared/SplitLoginLayout";
 
 const RecruiterRegister = () => {
     const {
@@ -47,24 +49,38 @@ const RecruiterRegister = () => {
                 closeButton: false
             });
             
-            const user = { full_name, username, email, location_id, gender, password, signup_type: "e" };
             try {
-                const response = await axios.post(
-                    `${SYSTEM_CONFIG.BASE_API_URL}/api/auth/register-recruiter`,
-                    user
-                );
+                if (SYSTEM_CONFIG.USE_MOCK_API || !SYSTEM_CONFIG.BASE_API_URL) {
+                    // Use Firebase for registration in mock mode
+                    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                    
+                    // Dismiss the progress toast and show success toast
+                    toast.dismiss();
+                    toast.success("Recruiter registration successful with Firebase!", {
+                        autoClose: 3000,
+                        onClose: () => navigate("/login-recruiter")
+                    });
+                    
+                    reset();
+                } else {
+                    // Use backend API for registration
+                    const user = { full_name, username, email, location_id, gender, password, signup_type: "e" };
+                    const response = await axios.post(
+                        `${SYSTEM_CONFIG.BASE_API_URL}/api/auth/register-recruiter`,
+                        user
+                    );
 
-                toast.dismiss();
-                toast.success("Registration successfully!", {
-                    autoClose: 3000,
-                    onClose: () => navigate("/login-recruiter")
-                });
-                
-                reset();
-                
+                    toast.dismiss();
+                    toast.success("Registration successfully!", {
+                        autoClose: 3000,
+                        onClose: () => navigate("/login-recruiter")
+                    });
+                    
+                    reset();
+                }
             } catch (error) {
                 toast.dismiss();
-                toast.error(error?.response?.data || "Registration failed!", { 
+                toast.error(error?.response?.data || error.message || "Registration failed!", { 
                     autoClose: 5000 
                 });
             }
@@ -81,17 +97,24 @@ const RecruiterRegister = () => {
                 throw new Error(error.message);
             }
 
-            // Send Google user data to your backend
-            const response = await axios.post(`${SYSTEM_CONFIG.BASE_API_URL}/api/auth/google-recruiter`, {
-                email: user.email,
-                full_name: user.displayName,
-                profile_photo: user.photoURL,
-                google_uid: user.uid,
-                signup_type: "g" // 'g' for Google signup
-            });
+            if (SYSTEM_CONFIG.USE_MOCK_API || !SYSTEM_CONFIG.BASE_API_URL) {
+                // Use Firebase user data directly in mock mode
+                // For recruiter registration, we would need to implement a specific handler
+                toast.success("Google Sign Up Successful! Please Login.");
+                navigate("/login-recruiter");
+            } else {
+                // Send Google user data to your backend
+                const response = await axios.post(`${SYSTEM_CONFIG.BASE_API_URL}/api/auth/google-recruiter`, {
+                    email: user.email,
+                    full_name: user.displayName,
+                    profile_photo: user.photoURL,
+                    google_uid: user.uid,
+                    signup_type: "g" // 'g' for Google signup
+                });
 
-            toast.success(response?.data?.message || "Google Sign Up Successful! Please Login.");
-            navigate("/dashboard");
+                toast.success(response?.data?.message || "Google Sign Up Successful! Please Login.");
+                navigate("/dashboard");
+            }
         } catch (error) {
             toast.error(error?.response?.data || error.message || "Google Sign Up Failed! Please try again.");
         }
@@ -110,7 +133,7 @@ const RecruiterRegister = () => {
     }, [isPasswordMatched.status]);
 
     return (
-        <Wrapper>
+        <SplitLoginLayout role="recruiter">
             <ToastContainer
                 position="top-right"
                 zIndex={1000}
@@ -124,12 +147,7 @@ const RecruiterRegister = () => {
                 pauseOnHover
                 theme="light"
             />
-            <div className="container">
-                <div className="flex justify-center">
-                    <Link to={user?.ac_status ? "/home" : "/"}>
-                        <Logo />
-                    </Link>
-                </div>
+            <FormWrapper>
                 <h1>Register as Recruiter</h1>
                 {!isPasswordMatched?.status && (
                     <p className="text-[11px] font-semibold text-center text-red-700 bg-red-100 px-1 py-2 mt-4 tracking-wider">
@@ -271,188 +289,180 @@ const RecruiterRegister = () => {
                         {isLoading ? "Loading..." : "Register as User"}
                     </button>
                 </div>
-            </div>
-        </Wrapper>
+            </FormWrapper>
+        </SplitLoginLayout>
     );
 };
 
-const Wrapper = styled.div`
-  width: 100%;
-  min-height: 100vh;
-  background: #f4f6f8;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 40px 20px;
-
-  .container {
-    background: #ADD8E6;
-    width: 100%;
-    max-width: 440px;
-    padding: 48px 36px;
-    border-radius: 12px;
-    box-shadow: 0px 12px 24px rgba(0, 0, 0, 0.06);
+const FormWrapper = styled.div`
     display: flex;
     flex-direction: column;
-    gap: 30px;
-  }
-
-  h1 {
-    text-align: center;
-    font-size: 24px;
-    font-weight: 600;
-    color: #1d1f2b;
-  }
-
-  .google-btn-container {
-    width: 100%;
-  }
-
-  .google-btn {
-    width: 100%;
-    padding: 12px;
-    font-size: 15px;
-    font-weight: 500;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    background-color: #ffffff;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
-    transition: all 0.3s ease;
-    cursor: pointer;
-  }
-
-  .google-btn:hover {
-    background-color: #f5f5f5;
-  }
-
-  .google-btn:disabled {
-    background-color: #fafafa;
-    cursor: not-allowed;
-  }
-
-  .google-icon {
-    font-size: 18px;
-  }
-
-  .divider {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #999;
-    font-size: 13px;
-    position: relative;
-  }
-
-  .divider::before,
-  .divider::after {
-    content: "";
     flex: 1;
-    height: 1px;
-    background-color: #e0e0e0;
-  }
-
-  .divider::before {
-    margin-right: 12px;
-  }
-
-  .divider::after {
-    margin-left: 12px;
-  }
-
-  form {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-  }
-
-  .row {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-  }
-
-  .row label {
-    font-size: 14px;
-    color: #333;
-    font-weight: 500;
-  }
-
-  .row input {
-    padding: 10px 14px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    font-size: 14px;
-    transition: border 0.3s ease;
-  }
-
-  .row input:focus {
-    outline: none;
-    border-color: #4a90e2;
-    box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.1);
-  }
-
-  .row input::placeholder {
-    color: #aaa;
-  }
-
-  .error-text {
-    font-size: 12px;
-    color: #d32f2f;
-    font-weight: 500;
-    margin-top: -10px;
-    padding-left: 2px;
-  }
-
-  button[type="submit"],
-  .user-btn {
-    width: 100%;
-    padding: 12px;
-    font-size: 15px;
-    font-weight: 600;
-    background-color:var(--color-accent);
-    color: white;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background 0.2s ease;
-  }
-
-  button[type="submit"]:hover,
-  .user-btn:hover {
-    background-color: #4178c0;
-  }
-
-  button:disabled {
-    background-color: #c4c4c4;
-    cursor: not-allowed;
-  }
-
-  .alt-actions {
-    display: flex;
-    justify-content: space-between;
-    font-size: 13px;
-    color: #666;
-    margin-top: 10px;
-  }
-
-  .link {
-    color: #4a90e2;
-    text-decoration: none;
-    font-weight: 500;
-  }
-
-  .link:hover {
-    text-decoration: underline;
-  }
-
-  @media (max-width: 480px) {
-    .container {
-      padding: 36px 24px;
+    min-height: 0;
+    
+    h1 {
+        margin-top: 10px;
+        text-align: center;
+        text-transform: capitalize;
+        font-size: calc(1rem + 0.5vw);
+        font-weight: 600;
+        color: var(--color-primary);
     }
-  }
+    form {
+        margin-top: 15px;
+    }
+
+    /* Google Button Styles */
+    .google-btn-container {
+        margin: 15px 0;
+        display: flex;
+        justify-content: center;
+    }
+    .google-btn {
+        width: 100%;
+        padding: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        background: white;
+        border: 1px solid #d6d8e6;
+        border-radius: 4px;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+    .google-btn:hover {
+        background: #f8f8f8;
+    }
+    .google-btn:disabled {
+        background: #f0f0f0;
+        cursor: not-allowed;
+    }
+    .google-icon {
+        font-size: 18px;
+    }
+
+    /* Divider Styles */
+    .divider {
+        display: flex;
+        align-items: center;
+        margin: 15px 0;
+        color: #777;
+        font-size: 12px;
+    }
+    .divider::before,
+    .divider::after {
+        content: "";
+        flex: 1;
+        border-bottom: 1px solid #d6d8e6;
+    }
+    .divider::before {
+        margin-right: 10px;
+    }
+    .divider::after {
+        margin-left: 10px;
+    }
+
+    .row {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 15px;
+    }
+
+    .row label {
+        font-size: 12px;
+        color: var(--color-black);
+        font-weight: 400;
+        margin-bottom: 2px;
+    }
+
+    .row input {
+        flex: 1;
+        padding: 8px 10px;
+        border: 1px solid #d6d8e6;
+        border-radius: 4px;
+        font-size: 12px;
+        font-weight: 500;
+        transition: all 0.2s ease-out;
+    }
+
+    .row input:focus {
+        outline: none;
+        box-shadow: inset 2px 2px 5px 0 rgba(42, 45, 48, 0.12);
+    }
+
+    .row input::placeholder {
+        color: var(--color-black);
+        opacity: 0.7;
+    }
+
+    button[type="submit"] {
+        min-width: 90px;
+        padding: 8px;
+        font-size: 16px;
+        letter-spacing: 1px;
+        background: var(--color-accent);
+        color: var(--color-white);
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        margin: 10px auto 0;
+        transition: background 0.2s ease-out;
+    }
+
+    button[type="submit"]:hover {
+        background: var(--color-primary);
+    }
+    button[type="submit"]:disabled {
+        background: var(--color-gray);
+        color: var(--color-black);
+        cursor: not-allowed;
+    }
+
+    /* Blue box button for "Register as User" */
+    .alternate-register {
+        margin-top: 15px;
+    }
+    
+    .user-btn {
+        width: 100%;
+        padding: 12px;
+        font-size: 15px;
+        font-weight: 600;
+        background-color: #414BEA;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background 0.2s ease;
+        box-shadow: 0 4px 6px rgba(65, 75, 234, 0.2);
+    }
+
+    .user-btn:hover {
+        background-color: #3339d1;
+        box-shadow: 0 6px 8px rgba(65, 75, 234, 0.3);
+    }
+
+    .user-btn:disabled {
+        background-color: #c4c4c4;
+        cursor: not-allowed;
+        box-shadow: none;
+    }
+
+    p {
+        margin-top: 10px;
+        margin-bottom: 0;
+    }
+
+    p .link {
+        text-transform: capitalize;
+        color: var(--color-primary);
+    }
+    p .link:hover {
+        text-decoration: underline;
+    }
 `;
 
 export default RecruiterRegister;

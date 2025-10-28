@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import Logo from "../components/Logo";
 import { Link, useNavigate } from "react-router-dom";
 import { useUserContext } from "../context/UserContext";
 import { useForm } from "react-hook-form";
@@ -12,6 +11,7 @@ import { signInWithGoogle } from "../utils/googleAuth";
 import { SYSTEM_CONFIG } from "../config/system-config";
 import { auth } from "../firebase";
 import { createUserWithEmailAndPassword } from "firebase/auth";
+import SplitLoginLayout from "../components/shared/SplitLoginLayout";
 
 const CollegeRegister = () => {
     const {
@@ -102,14 +102,9 @@ const CollegeRegister = () => {
     }, [isPasswordMatched.status]);
 
     return (
-        <Wrapper>
+        <SplitLoginLayout role="college">
             <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover theme="light"/>
-            <div className="container">
-                <div className="flex justify-center">
-                    <Link to={user?.ac_status ? "/home" : "/"}>
-                        <Logo />
-                    </Link>
-                </div>
+            <FormWrapper>
                 <h1>Register as College</h1>
                 {!isPasswordMatched?.status && (
                     <p className="text-[11px] font-semibold text-center text-red-700 bg-red-100 px-1 py-2 mt-4 tracking-wider">
@@ -225,31 +220,19 @@ const CollegeRegister = () => {
                         </Link>
                     </p>
                 </div>
-            </div>
-        </Wrapper>
+            </FormWrapper>
+        </SplitLoginLayout>
     );
 };
 
-const Wrapper = styled.div`
-    width: 100%;
-    min-height: 100vh;
-    background: #f9faff;
+const FormWrapper = styled.div`
     display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 30px 0;
-    .container {
-        background: var(--color-white);
-        max-width: 360px;
-        width: 100%;
-        padding: 58px 44px;
-        border: 1px solid #e1e2f0;
-        border-radius: 4px;
-        box-shadow: 0 0 5px 0 rgba(42, 45, 48, 0.12);
-        transition: all 0.3s ease;
-    }
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+    
     h1 {
-        margin-top: 20px;
+        margin-top: 10px;
         text-align: center;
         text-transform: capitalize;
         font-size: calc(1rem + 0.5vw);
@@ -257,13 +240,13 @@ const Wrapper = styled.div`
         color: var(--color-primary);
     }
     form {
-        margin-top: calc(1rem + 0.9vw);
+        margin-top: 15px;
     }
 
     .row {
         display: flex;
         flex-direction: column;
-        margin-bottom: 20px;
+        margin-bottom: 15px;
     }
 
     .row label {
@@ -303,7 +286,7 @@ const Wrapper = styled.div`
         border: none;
         border-radius: 6px;
         cursor: pointer;
-        margin: 15px auto 0;
+        margin: 10px auto 0;
         transition: background 0.2s ease-out;
     }
 
@@ -316,15 +299,11 @@ const Wrapper = styled.div`
         cursor: not-allowed;
     }
 
-    @media (max-width: 458px) {
-        .container {
-            width: 90%;
-            padding: 30px 0;
-        }
-        form {
-            padding: 0 20px;
-        }
+    p {
+        margin-top: 10px;
+        margin-bottom: 0;
     }
+
     p .link {
         text-transform: capitalize;
         color: var(--color-primary);
