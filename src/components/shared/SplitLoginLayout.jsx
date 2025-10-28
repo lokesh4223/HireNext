@@ -1,19 +1,51 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import Logo from "../Logo";
 
 const SplitLoginLayout = ({ children, role }) => {
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  
+  // Dummy image links for now - you can replace these with your actual links
+  const images = [
+    "https://bluestock.in/cdn/login-1.webp",
+    "https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80",
+    "https://images.unsplash.com/photo-1551836022-d5d88e9218df?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80",
+    "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80",
+    "https://images.unsplash.com/photo-1499951360447-b19be8fe80f5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80",
+    "https://images.unsplash.com/photo-1555421689-491a97ff2040?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80"
+  ];
+
+  // Auto slide images every 3 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentImageIndex((prevIndex) => 
+        prevIndex === images.length - 1 ? 0 : prevIndex + 1
+      );
+    }, 3000);
+
+    return () => clearInterval(interval);
+  }, [images.length]);
+
   return (
     <Wrapper>
       <div className="container">
-        {/* Left Panel - Branding with Image */}
+        {/* Left Panel - Branding with Image Slideshow */}
         <div className="left-panel">
-          <div className="image-container">
-            <img 
-              src="https://bluestock.in/cdn/login-1.webp" 
-              alt="Login illustration" 
-              className="login-image"
-            />
+          <div className="slideshow-container">
+            <div className="slideshow">
+              {images.map((image, index) => (
+                <div 
+                  key={index} 
+                  className={`slide ${index === currentImageIndex ? 'active' : ''}`}
+                >
+                  <img 
+                    src={image} 
+                    alt={`Login illustration ${index + 1}`} 
+                    className="login-image"
+                  />
+                </div>
+              ))}
+            </div>
           </div>
           <div className="welcome-text">
             <h1>Sign in</h1>
@@ -73,7 +105,7 @@ const Wrapper = styled.div`
     overflow: hidden;
   }
   
-  /* Left side - Image and Text */
+  /* Left side - Image Slideshow and Text */
   .left-panel {
     flex: 1;
     background-color: #dceef0;
@@ -87,19 +119,38 @@ const Wrapper = styled.div`
     color: #333;
   }
   
-  .image-container {
+  .slideshow-container {
     width: 100%;
     height: 70%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    position: relative;
+    overflow: hidden;
+    border-radius: 10px;
+  }
+  
+  .slideshow {
+    width: 100%;
+    height: 100%;
+    position: relative;
+  }
+  
+  .slide {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transition: opacity 1s ease-in-out;
+  }
+  
+  .slide.active {
+    opacity: 1;
   }
   
   .login-image {
-    max-width: 100%;
-    max-height: 100%;
-    object-fit: contain;
-    border-radius: 10px;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
   }
   
   .welcome-text {
@@ -225,7 +276,7 @@ const Wrapper = styled.div`
       min-height: 350px;
     }
     
-    .image-container {
+    .slideshow-container {
       height: 60%;
     }
     
