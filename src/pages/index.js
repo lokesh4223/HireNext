@@ -1,0 +1,12 @@
+export { default as Landing } from "./Landing";
+export { default as Login } from "./Login";
+export { default as Register } from "./Register";
+export { default as RecruiterLogin } from "./RecruiterLogin";
+export { default as RecruiterRegister } from "./RecruiterRegister";
+export { default as CompanyLogin } from "./CompanyLogin";
+export { default as CompanyRegister } from "./CompanyRegister";
+export { default as CollegeLogin } from "./CollegeLogin";
+export { default as CollegeRegister } from "./CollegeRegister";
+export { default as LoginTypeSelector } from "./LoginTypeSelector";
+export { default as FooterMain } from "./FooterMain";
+export { default as Error } from "./Error";

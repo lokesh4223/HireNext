@@ -1,0 +1,24 @@
+import React from "react";
+import ReactDOM from "react-dom/client";
+import './App.css';
+import "./index.css";
+import router from "./Router/Routes";
+import { RouterProvider } from "react-router-dom";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { UserContext } from "./context/UserContext";
+import axios from "axios";
+
+axios.defaults.withCredentials = true;
+
+// Create a client
+const queryClient = new QueryClient();
+
+ReactDOM.createRoot(document.getElementById("root")).render(
+  <React.StrictMode>
+    <QueryClientProvider client={queryClient}>
+      <UserContext>
+        <RouterProvider router={router} />
+      </UserContext>
+    </QueryClientProvider>
+  </React.StrictMode>
+);
