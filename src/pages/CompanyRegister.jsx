@@ -254,6 +254,27 @@ const CompanyRegister = () => {
                         )}
                     </div>
                     
+                    <div className="row checkbox-row">
+                        <label className="checkbox-label">
+                            <input
+                                type="checkbox"
+                                {...register("termsAccepted", {
+                                    required: {
+                                        value: true,
+                                        message: "You must accept the terms and conditions",
+                                    },
+                                })}
+                            />
+                            <span className="checkmark"></span>
+                            I accept the terms and conditions
+                        </label>
+                        {errors?.termsAccepted && (
+                            <span className="text-[10px] font-semibold text-red-600 mt-1 pl-1 tracking-wider">
+                                {errors?.termsAccepted?.message}
+                            </span>
+                        )}
+                    </div>
+                    
                     <div className="divider">
                         <span>OR</span>
                     </div>
@@ -429,6 +450,28 @@ const FormWrapper = styled.div`
     }
     p .link:hover {
         text-decoration: underline;
+    }
+    
+    /* Checkbox styling */
+    .checkbox-row {
+        margin-bottom: 15px;
+        display: flex;
+        align-items: center;
+    }
+    
+    .checkbox-label {
+        display: flex;
+        align-items: center;
+        font-size: 12px;
+        color: var(--color-black);
+        font-weight: 400;
+        cursor: pointer;
+        gap: 8px; /* Reduce gap between checkbox and text */
+    }
+    
+    .checkbox-label input {
+        width: auto;
+        margin: 0; /* Remove default margins */
     }
 `;
 

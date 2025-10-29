@@ -99,7 +99,7 @@ const Wrapper = styled.div`
     display: flex;
     width: 100%;
     max-width: 1200px;
-    height: 792px; /* Increased from 720px to 792px (10% increase) */
+    height: 869px; /* Increased from 828px to 869px (5% increase) */
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
     border-radius: 15px;
     overflow: hidden;

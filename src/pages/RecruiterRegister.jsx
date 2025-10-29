@@ -298,6 +298,27 @@ const RecruiterRegister = () => {
                     </div>
                   </div>
                   
+                  <div className="row checkbox-row">
+                    <label className="checkbox-label">
+                      <input
+                        type="checkbox"
+                        {...register("termsAccepted", {
+                          required: {
+                            value: true,
+                            message: "You must accept the terms and conditions",
+                          },
+                        })}
+                      />
+                      <span className="checkmark"></span>
+                      I accept the terms and conditions
+                    </label>
+                    {errors?.termsAccepted && (
+                      <span className="text-[10px] font-semibold text-red-600 mt-1 pl-1 tracking-wider">
+                        {errors?.termsAccepted?.message}
+                      </span>
+                    )}
+                  </div>
+                  
                   <div className="flex justify-center">
                     <button type="submit" disabled={isLoading}>
                       {isLoading ? "Loading..." : "Register"}
