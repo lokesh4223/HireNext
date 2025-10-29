@@ -156,105 +156,140 @@ const RecruiterRegister = () => {
                 )}
 
                 <form onSubmit={handleSubmit(onSubmit)} autoComplete="off">
+                  <div className="form-row">
                     <div className="row">
-                        <label htmlFor="full_name">Full Name</label>
-                        <input
-                            type="text"
-                            name="full_name"
-                            autoComplete="off"
-                            placeholder="Enter your full name"
-                            {...register("full_name", {
-                                required: {
-                                    value: true,
-                                    message: "Full Name is required",
-                                },
-                            })}
-                        />
-                        {errors?.full_name && (
-                            <span className="text-[10px] font-semibold text-red-600 mt-1 pl-1 tracking-wider">
-                                {errors?.full_name?.message}
-                            </span>
-                        )}
+                      <label htmlFor="full_name">Full Name</label>
+                      <input
+                        type="text"
+                        name="full_name"
+                        autoComplete="off"
+                        placeholder="Enter your full name"
+                        {...register("full_name", {
+                          required: {
+                            value: true,
+                            message: "Full Name is required",
+                          },
+                        })}
+                      />
+                      {errors?.full_name && (
+                        <span className="text-[10px] font-semibold text-red-600 mt-1 pl-1 tracking-wider">
+                          {errors?.full_name?.message}
+                        </span>
+                      )}
                     </div>
+                  </div>
+                  
+                  <div className="form-row">
                     <div className="row">
-                        <label htmlFor="email">Email</label>
-                        <input
-                            type="email"
-                            name="email"
-                            placeholder="Email@example.com"
-                            {...register("email", {
-                                required: {
-                                    value: true,
-                                    message: "A valid email is required",
-                                },
-                                pattern: {
-                                    value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-                                    message: "Enter a valid email",
-                                },
-                            })}
-                        />
-                        {errors?.email && (
-                            <span className="text-[10px] font-semibold text-red-600 mt-1 pl-1 tracking-wider">
-                                {errors?.email?.message}
-                            </span>
-                        )}
+                      <label htmlFor="email">Email</label>
+                      <input
+                        type="email"
+                        name="email"
+                        placeholder="Email@example.com"
+                        {...register("email", {
+                          required: {
+                            value: true,
+                            message: "A valid email is required",
+                          },
+                          pattern: {
+                            value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+                            message: "Enter a valid email",
+                          },
+                        })}
+                      />
+                      {errors?.email && (
+                        <span className="text-[10px] font-semibold text-red-600 mt-1 pl-1 tracking-wider">
+                          {errors?.email?.message}
+                        </span>
+                      )}
                     </div>
+                    
                     <div className="row">
-                        <label htmlFor="password">Password</label>
-                        <input
-                            type="password"
-                            name="password"
-                            placeholder="Type Here"
-                            {...register("password", {
-                                required: {
-                                    value: true,
-                                    message: "Password is required",
-                                },
-                                maxLength: {
-                                    value: 20,
-                                    message: "Password is too long(max 20char)",
-                                },
-                                minLength: {
-                                    value: 8,
-                                    message: "Password is too short (min 8char)",
-                                },
-                                pattern: {
-                                    value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^a-zA-Z0-9])/,
-                                    message: "At least one uppercase,one special char and one number",
-                                },
-                            })}
-                        />
-                        {errors?.password && (
-                            <span className="text-[10px] font-semibold text-red-600 mt-1 pl-1 tracking-wider">
-                                {errors?.password?.message}
-                            </span>
-                        )}
+                      <label htmlFor="mobile">Mobile Number</label>
+                      <input
+                        type="tel"
+                        name="mobile"
+                        placeholder="Enter mobile number"
+                        {...register("mobile", {
+                          required: {
+                            value: true,
+                            message: "Mobile number is required",
+                          },
+                          pattern: {
+                            value: /^[0-9]{10}$/,
+                            message: "Enter a valid 10-digit mobile number",
+                          },
+                        })}
+                      />
+                      {errors?.mobile && (
+                        <span className="text-[10px] font-semibold text-red-600 mt-1 pl-1 tracking-wider">
+                          {errors?.mobile?.message}
+                        </span>
+                      )}
                     </div>
+                  </div>
+                  
+                  <div className="form-row">
                     <div className="row">
-                        <label htmlFor="password">Confirm Password</label>
-                        <input
-                            type="password"
-                            name="password"
-                            placeholder="Type Here"
-                            {...register("confirmPassword", {
-                                required: {
-                                    value: true,
-                                    message: "Password is required",
-                                },
-                            })}
-                        />
-                        {errors?.confirmPassword && (
-                            <span className="text-[10px] font-semibold text-red-600 mt-1 pl-1 tracking-wider">
-                                {errors?.confirmPassword?.message}
-                            </span>
-                        )}
+                      <label htmlFor="password">Password</label>
+                      <input
+                        type="password"
+                        name="password"
+                        placeholder="Type Here"
+                        {...register("password", {
+                          required: {
+                            value: true,
+                            message: "Password is required",
+                          },
+                          maxLength: {
+                            value: 20,
+                            message: "Password is too long(max 20char)",
+                          },
+                          minLength: {
+                            value: 8,
+                            message: "Password is too short (min 8char)",
+                          },
+                          pattern: {
+                            value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^a-zA-Z0-9])/,
+                            message: "At least one uppercase,one special char and one number",
+                          },
+                        })}
+                      />
+                      {errors?.password && (
+                        <span className="text-[10px] font-semibold text-red-600 mt-1 pl-1 tracking-wider">
+                          {errors?.password?.message}
+                        </span>
+                      )}
                     </div>
-                    <div className="flex justify-center">
-                        <button type="submit" disabled={isLoading}>
-                            {isLoading ? "Loading..." : "Register"}
-                        </button>
+                    
+                    <div className="row">
+                      <label htmlFor="confirmPassword">Confirm Password</label>
+                      <input
+                        type="password"
+                        name="confirmPassword"
+                        placeholder="Confirm Password"
+                        {...register("confirmPassword", {
+                          required: {
+                            value: true,
+                            message: "Password confirmation is required",
+                          },
+                        })}
+                      />
+                      {errors?.confirmPassword && (
+                        <span className="text-[10px] font-semibold text-red-600 mt-1 pl-1 tracking-wider">
+                          {errors?.confirmPassword?.message}
+                        </span>
+                      )}
                     </div>
+                  </div>
+                  
+                  <div className="flex justify-center">
+                    <button type="submit" disabled={isLoading}>
+                      {isLoading ? "Loading..." : "Register"}
+                    </button>
+                  </div>
                 </form>
+
                 <div className="divider">
                     <span>OR</span>
                 </div>
@@ -310,6 +345,18 @@ const FormWrapper = styled.div`
     }
     form {
         margin-top: 15px;
+    }
+
+    /* Form row for inline fields */
+    .form-row {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 15px;
+    }
+    
+    .form-row > .row {
+        flex: 1;
+        margin-bottom: 0;
     }
 
     /* Google Button Styles */

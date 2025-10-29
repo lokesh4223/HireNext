@@ -5,23 +5,23 @@ import Logo from "../Logo";
 const SplitLoginLayout = ({ children, role }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   
-  // Dummy image links for now - you can replace these with your actual links
+  // Image array with your provided images, including the bluestock image as first
   const images = [
     "https://bluestock.in/cdn/login-1.webp",
-    "https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80",
-    "https://images.unsplash.com/photo-1551836022-d5d88e9218df?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80",
-    "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80",
-    "https://images.unsplash.com/photo-1499951360447-b19be8fe80f5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80",
-    "https://images.unsplash.com/photo-1555421689-491a97ff2040?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80"
+    "https://images.academyocean.com/webflow/features/quiz-maker/Frame-4374-p-800.png",
+    "https://images.academyocean.com/webflow/solution/sales_onboarding/main-Product-Training-p-800.png",
+    "https://images.academyocean.com/webflow/solution/retail/Group-4343_1Group_4343.webp",
+    "https://images.academyocean.com/webflow/solution/retail/Roadmap.webp",
+    "https://hollanddigital.ie/media/images/default/section/600x400/Holland_Digital_EduVerse_LMS_Professional_3.png"
   ];
 
-  // Auto slide images every 3 seconds
+  // Auto slide images every 5 seconds
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentImageIndex((prevIndex) => 
         prevIndex === images.length - 1 ? 0 : prevIndex + 1
       );
-    }, 3000);
+    }, 5000);
 
     return () => clearInterval(interval);
   }, [images.length]);
@@ -98,8 +98,8 @@ const Wrapper = styled.div`
   .container {
     display: flex;
     width: 100%;
-    max-width: 1000px;
-    height: 600px;
+    max-width: 1200px;
+    height: 792px; /* Increased from 720px to 792px (10% increase) */
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
     border-radius: 15px;
     overflow: hidden;
@@ -108,7 +108,7 @@ const Wrapper = styled.div`
   /* Left side - Image Slideshow and Text */
   .left-panel {
     flex: 1;
-    background-color: #dceef0;
+    background-color: #C8C7CA;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -182,7 +182,7 @@ const Wrapper = styled.div`
   /* Right side - Login Form */
   .right-panel {
     flex: 1;
-    background: #ffffff;
+    background: white;
     padding: 20px 30px;
     display: flex;
     flex-direction: column;
