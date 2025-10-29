@@ -90,6 +90,53 @@ const CompanyRegister = () => {
         setIsLoading(false);
     };
 
+    const handleGoogleSignUp = async () => {
+        setIsGoogleLoading(true);
+        try {
+            const { user, error } = await signInWithGoogle();
+            
+            if (error) {
+                // Handle unauthorized domain error specifically
+                if (error.code === 'auth/unauthorized-domain') {
+                    toast.error("Google Sign-In is not authorized for this domain. Please contact the administrator.", { 
+                        autoClose: 7000 
+                    });
+                } else {
+                    throw new Error(error.message);
+                }
+                return;
+            }
+
+            if (SYSTEM_CONFIG.USE_MOCK_API || !SYSTEM_CONFIG.BASE_API_URL) {
+                // Use Firebase user data directly in mock mode
+                toast.success("Google Sign Up Successful! Please Login.");
+                navigate("/login-company");
+            } else {
+                // Send Google user data to your backend
+                const response = await axios.post(`${SYSTEM_CONFIG.BASE_API_URL}/api/auth/google-company`, {
+                    email: user.email,
+                    full_name: user.displayName,
+                    profile_photo: user.photoURL,
+                    google_uid: user.uid,
+                    signup_type: "g" // 'g' for Google signup
+                });
+
+                toast.success(response?.data?.message || "Google Sign Up Successful! Please Login.");
+                navigate("/login-company");
+            }
+        } catch (error) {
+            // Handle unauthorized domain error specifically
+            if (error.code === 'auth/unauthorized-domain') {
+                toast.error("Google Sign-In is not authorized for this domain. Please contact the administrator.", { 
+                    autoClose: 7000 
+                });
+            } else {
+                toast.error(error?.response?.data || error.message || "Google Sign Up Failed! Please try again.");
+            }
+        }
+        setIsGoogleLoading(false);
+    };
+
     // to hide the popup
     useEffect(() => {
         const intervalId = setInterval(() => {
@@ -206,15 +253,30 @@ const CompanyRegister = () => {
                             </span>
                         )}
                     </div>
+                    
+                    <div className="divider">
+                        <span>OR</span>
+                    </div>
+
+                    {/* Google Sign Up Button */}
+                    <div className="google-btn-container">
+                        <button 
+                            type="button" 
+                            className="google-btn"
+                            onClick={handleGoogleSignUp}
+                            disabled={isGoogleLoading}
+                        >
+                            <FcGoogle className="google-icon" />
+                            {isGoogleLoading ? "Processing..." : "Continue with Google"}
+                        </button>
+                    </div>
+                    
                     <div className="flex justify-center">
                         <button type="submit" disabled={isLoading}>
                             {isLoading ? "Loading..." : "Register"}
                         </button>
                     </div>
                 </form>
-                <div className="divider">
-                    <span>OR</span>
-                </div>
 
                 <div className="">
                     <p className="text-center text-[10px] font-semibold opacity-9 mt-3">

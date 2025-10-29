@@ -96,7 +96,15 @@ const Register = () => {
             const { user, error } = await signInWithGoogle();
             
             if (error) {
-                throw new Error(error.message);
+                // Handle unauthorized domain error specifically
+                if (error.code === 'auth/unauthorized-domain') {
+                    toast.error("Google Sign-In is not authorized for this domain. Please contact the administrator.", { 
+                        autoClose: 7000 
+                    });
+                } else {
+                    throw new Error(error.message);
+                }
+                return;
             }
 
             if (SYSTEM_CONFIG.USE_MOCK_API || !SYSTEM_CONFIG.BASE_API_URL) {
@@ -123,7 +131,14 @@ const Register = () => {
                 navigate("/home");
             }
         } catch (error) {
-            toast.error(error.message || "Google sign up failed!");
+            // Handle unauthorized domain error specifically
+            if (error.code === 'auth/unauthorized-domain') {
+                toast.error("Google Sign-In is not authorized for this domain. Please contact the administrator.", { 
+                    autoClose: 7000 
+                });
+            } else {
+                toast.error(error.message || "Google sign up failed!");
+            }
         }
         setIsGoogleLoading(false);
     };

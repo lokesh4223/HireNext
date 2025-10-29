@@ -94,7 +94,15 @@ const RecruiterRegister = () => {
             const { user, error } = await signInWithGoogle();
             
             if (error) {
-                throw new Error(error.message);
+                // Handle unauthorized domain error specifically
+                if (error.code === 'auth/unauthorized-domain') {
+                    toast.error("Google Sign-In is not authorized for this domain. Please contact the administrator.", { 
+                        autoClose: 7000 
+                    });
+                } else {
+                    throw new Error(error.message);
+                }
+                return;
             }
 
             if (SYSTEM_CONFIG.USE_MOCK_API || !SYSTEM_CONFIG.BASE_API_URL) {
@@ -116,7 +124,14 @@ const RecruiterRegister = () => {
                 navigate("/dashboard");
             }
         } catch (error) {
-            toast.error(error?.response?.data || error.message || "Google Sign Up Failed! Please try again.");
+            // Handle unauthorized domain error specifically
+            if (error.code === 'auth/unauthorized-domain') {
+                toast.error("Google Sign-In is not authorized for this domain. Please contact the administrator.", { 
+                    autoClose: 7000 
+                });
+            } else {
+                toast.error(error?.response?.data || error.message || "Google Sign Up Failed! Please try again.");
+            }
         }
         setIsGoogleLoading(false);
     };

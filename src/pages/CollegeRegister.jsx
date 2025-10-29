@@ -90,6 +90,53 @@ const CollegeRegister = () => {
         setIsLoading(false);
     };
 
+    const handleGoogleSignUp = async () => {
+        setIsGoogleLoading(true);
+        try {
+            const { user, error } = await signInWithGoogle();
+            
+            if (error) {
+                // Handle unauthorized domain error specifically
+                if (error.code === 'auth/unauthorized-domain') {
+                    toast.error("Google Sign-In is not authorized for this domain. Please contact the administrator.", { 
+                        autoClose: 7000 
+                    });
+                } else {
+                    throw new Error(error.message);
+                }
+                return;
+            }
+
+            if (SYSTEM_CONFIG.USE_MOCK_API || !SYSTEM_CONFIG.BASE_API_URL) {
+                // Use Firebase user data directly in mock mode
+                toast.success("Google Sign Up Successful! Please Login.");
+                navigate("/login-college");
+            } else {
+                // Send Google user data to your backend
+                const response = await axios.post(`${SYSTEM_CONFIG.BASE_API_URL}/api/auth/google-college`, {
+                    email: user.email,
+                    full_name: user.displayName,
+                    profile_photo: user.photoURL,
+                    google_uid: user.uid,
+                    signup_type: "g" // 'g' for Google signup
+                });
+
+                toast.success(response?.data?.message || "Google Sign Up Successful! Please Login.");
+                navigate("/login-college");
+            }
+        } catch (error) {
+            // Handle unauthorized domain error specifically
+            if (error.code === 'auth/unauthorized-domain') {
+                toast.error("Google Sign-In is not authorized for this domain. Please contact the administrator.", { 
+                    autoClose: 7000 
+                });
+            } else {
+                toast.error(error?.response?.data || error.message || "Google Sign Up Failed! Please try again.");
+            }
+        }
+        setIsGoogleLoading(false);
+    };
+
     // to hide the popup
     useEffect(() => {
         const intervalId = setInterval(() => {
@@ -206,6 +253,24 @@ const CollegeRegister = () => {
                             </span>
                         )}
                     </div>
+                    
+                    <div className="divider">
+                        <span>OR</span>
+                    </div>
+
+                    {/* Google Sign Up Button */}
+                    <div className="google-btn-container">
+                        <button 
+                            type="button" 
+                            className="google-btn"
+                            onClick={handleGoogleSignUp}
+                            disabled={isGoogleLoading}
+                        >
+                            <FcGoogle className="google-icon" />
+                            {isGoogleLoading ? "Processing..." : "Continue with Google"}
+                        </button>
+                    </div>
+                    
                     <div className="flex justify-center">
                         <button type="submit" disabled={isLoading}>
                             {isLoading ? "Loading..." : "Register"}
@@ -241,6 +306,59 @@ const FormWrapper = styled.div`
     }
     form {
         margin-top: 15px;
+    }
+
+    /* Google Button Styles */
+    .google-btn-container {
+        margin: 15px 0;
+        display: flex;
+        justify-content: center;
+    }
+    .google-btn {
+        width: 100%;
+        padding: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        background: white;
+        border: 1px solid #d6d8e6;
+        border-radius: 4px;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+    .google-btn:hover {
+        background: #f8f8f8;
+    }
+    .google-btn:disabled {
+        background: #f0f0f0;
+        cursor: not-allowed;
+    }
+    .google-icon {
+        font-size: 18px;
+    }
+
+    /* Divider Styles */
+    .divider {
+        display: flex;
+        align-items: center;
+        margin: 15px 0;
+        color: #777;
+        font-size: 12px;
+    }
+    .divider::before,
+    .divider::after {
+        content: "";
+        flex: 1;
+        border-bottom: 1px solid #d6d8e6;
+    }
+    .divider::before {
+        margin-right: 10px;
+    }
+    .divider::after {
+        margin-left: 10px;
     }
 
     .row {
