@@ -30,6 +30,25 @@ const RecruiterRegister = () => {
     const { user } = useUserContext();
     const navigate = useNavigate();
 
+    // Collect all error messages
+    const getErrorMessages = () => {
+        const errorMessages = [];
+        
+        // Password mismatch error
+        if (!isPasswordMatched.status) {
+            errorMessages.push(isPasswordMatched.message);
+        }
+        
+        // Form field errors
+        Object.keys(errors).forEach(key => {
+            if (errors[key]?.message) {
+                errorMessages.push(errors[key].message);
+            }
+        });
+        
+        return errorMessages;
+    };
+
     const onSubmit = async (data) => {
         const { full_name, username, email, location_id, gender, password, confirmPassword } = data;
 
@@ -148,7 +167,7 @@ const RecruiterRegister = () => {
     }, [isPasswordMatched.status]);
 
     return (
-        <SplitLoginLayout role="recruiter">
+        <SplitLoginLayout role="recruiter" alerts={getErrorMessages()}>
             <ToastContainer
                 position="top-right"
                 zIndex={1000}
@@ -164,11 +183,6 @@ const RecruiterRegister = () => {
             />
             <FormWrapper>
                 <h1>Register as Recruiter</h1>
-                {!isPasswordMatched?.status && (
-                    <p className="text-[11px] font-semibold text-center text-red-700 bg-red-100 px-1 py-2 mt-4 tracking-wider">
-                        both password not matched
-                    </p>
-                )}
 
                 <form onSubmit={handleSubmit(onSubmit)} autoComplete="off">
                   <div className="form-row">
@@ -186,11 +200,6 @@ const RecruiterRegister = () => {
                           },
                         })}
                       />
-                      {errors?.full_name && (
-                        <span className="text-[10px] font-semibold text-red-600 mt-1 pl-1 tracking-wider">
-                          {errors?.full_name?.message}
-                        </span>
-                      )}
                     </div>
                   </div>
                   
@@ -212,11 +221,6 @@ const RecruiterRegister = () => {
                           },
                         })}
                       />
-                      {errors?.email && (
-                        <span className="text-[10px] font-semibold text-red-600 mt-1 pl-1 tracking-wider">
-                          {errors?.email?.message}
-                        </span>
-                      )}
                     </div>
                     
                     <div className="row">
@@ -236,11 +240,6 @@ const RecruiterRegister = () => {
                           },
                         })}
                       />
-                      {errors?.mobile && (
-                        <span className="text-[10px] font-semibold text-red-600 mt-1 pl-1 tracking-wider">
-                          {errors?.mobile?.message}
-                        </span>
-                      )}
                     </div>
                   </div>
                   
@@ -270,11 +269,6 @@ const RecruiterRegister = () => {
                           },
                         })}
                       />
-                      {errors?.password && (
-                        <span className="text-[10px] font-semibold text-red-600 mt-1 pl-1 tracking-wider">
-                          {errors?.password?.message}
-                        </span>
-                      )}
                     </div>
                     
                     <div className="row">
@@ -290,11 +284,6 @@ const RecruiterRegister = () => {
                           },
                         })}
                       />
-                      {errors?.confirmPassword && (
-                        <span className="text-[10px] font-semibold text-red-600 mt-1 pl-1 tracking-wider">
-                          {errors?.confirmPassword?.message}
-                        </span>
-                      )}
                     </div>
                   </div>
                   
@@ -312,11 +301,6 @@ const RecruiterRegister = () => {
                       <span className="checkmark"></span>
                       I accept the terms and conditions
                     </label>
-                    {errors?.termsAccepted && (
-                      <span className="text-[10px] font-semibold text-red-600 mt-1 pl-1 tracking-wider">
-                        {errors?.termsAccepted?.message}
-                      </span>
-                    )}
                   </div>
                   
                   <div className="flex justify-center">
@@ -386,8 +370,8 @@ const FormWrapper = styled.div`
     /* Form row for inline fields */
     .form-row {
         display: flex;
-        gap: 15px;
-        margin-bottom: 15px;
+        gap: 10px;
+        margin-bottom: 10px;
     }
     
     .form-row > .row {
@@ -451,7 +435,7 @@ const FormWrapper = styled.div`
     .row {
         display: flex;
         flex-direction: column;
-        margin-bottom: 15px;
+        margin-bottom: 10px;
     }
 
     .row label {
@@ -545,6 +529,28 @@ const FormWrapper = styled.div`
     }
     p .link:hover {
         text-decoration: underline;
+    }
+    
+    /* Checkbox styling */
+    .checkbox-row {
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+    }
+    
+    .checkbox-label {
+        display: flex;
+        align-items: center;
+        font-size: 12px;
+        color: var(--color-black);
+        font-weight: 400;
+        cursor: pointer;
+        gap: 4px; /* Further reduce gap between checkbox and text */
+    }
+    
+    .checkbox-label input {
+        width: auto;
+        margin: 0; /* Remove default margins */
     }
 `;
 

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import Logo from "../Logo";
 
-const SplitLoginLayout = ({ children, role }) => {
+const SplitLoginLayout = ({ children, role, alerts = [] }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   
   // Image array with your provided images, including the bluestock image as first
@@ -29,7 +29,7 @@ const SplitLoginLayout = ({ children, role }) => {
   return (
     <Wrapper>
       <div className="container">
-        {/* Left Panel - Branding with Image Slideshow */}
+        {/* Left Panel - Branding with Image Slideshow */};
         <div className="left-panel">
           <div className="slideshow-container">
             <div className="slideshow">
@@ -77,8 +77,24 @@ const SplitLoginLayout = ({ children, role }) => {
             </div>
           </div>
           
-          <div className="form-container">
-            {children}
+          <div className="content-container">
+            <div className="form-container">
+              {children}
+            </div>
+            
+            {/* Alert Sidebar */}
+            {alerts && alerts.length > 0 && (
+              <div className="alert-sidebar">
+                <h3>Validation Errors</h3>
+                <ul>
+                  {alerts.map((alert, index) => (
+                    <li key={index} className="alert-item">
+                      {alert}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -232,6 +248,13 @@ const Wrapper = styled.div`
     display: block;
   }
   
+  /* Content container with form and alert sidebar */
+  .content-container {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+  }
+  
   /* Form container with scroll */
   .form-container {
     flex: 1;
@@ -264,6 +287,43 @@ const Wrapper = styled.div`
     flex-direction: column;
   }
   
+  /* Alert sidebar */
+  .alert-sidebar {
+    width: 30%;
+    min-width: 150px;
+    max-width: 250px;
+    background-color: #fff5f5;
+    border-left: 2px solid #fed7d7;
+    padding: 15px;
+    margin-left: 15px;
+    border-radius: 5px;
+    overflow-y: auto;
+  }
+  
+  .alert-sidebar h3 {
+    color: #c53030;
+    font-size: 14px;
+    margin-top: 0;
+    margin-bottom: 10px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid #fed7d7;
+  }
+  
+  .alert-sidebar ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .alert-sidebar .alert-item {
+    color: #c53030;
+    font-size: 12px;
+    margin-bottom: 8px;
+    padding: 5px;
+    background-color: #fed7d7;
+    border-radius: 3px;
+  }
+  
   /* Responsive design */
   @media (max-width: 768px) {
     .container {
@@ -291,6 +351,18 @@ const Wrapper = styled.div`
     
     .right-panel {
       padding: 20px 30px;
+    }
+    
+    .content-container {
+      flex-direction: column;
+    }
+    
+    .alert-sidebar {
+      width: 100%;
+      max-width: 100%;
+      margin-left: 0;
+      margin-top: 15px;
+      order: 2;
     }
   }
 `;

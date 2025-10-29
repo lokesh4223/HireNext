@@ -30,6 +30,25 @@ const CollegeRegister = () => {
     const [isGoogleLoading, setIsGoogleLoading] = useState(false);
     const navigate = useNavigate();
 
+    // Collect all error messages
+    const getErrorMessages = () => {
+        const errorMessages = [];
+        
+        // Password mismatch error
+        if (!isPasswordMatched.status) {
+            errorMessages.push(isPasswordMatched.message);
+        }
+        
+        // Form field errors
+        Object.keys(errors).forEach(key => {
+            if (errors[key]?.message) {
+                errorMessages.push(errors[key].message);
+            }
+        });
+        
+        return errorMessages;
+    };
+
     const onSubmit = async (data) => {
         const { full_name, username, email, location_id, gender, password, confirmPassword } = data;
 
@@ -149,15 +168,10 @@ const CollegeRegister = () => {
     }, [isPasswordMatched.status]);
 
     return (
-        <SplitLoginLayout role="college">
+        <SplitLoginLayout role="college" alerts={getErrorMessages()}>
             <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover theme="light"/>
             <FormWrapper>
                 <h1>Register as College</h1>
-                {!isPasswordMatched?.status && (
-                    <p className="text-[11px] font-semibold text-center text-red-700 bg-red-100 px-1 py-2 mt-4 tracking-wider">
-                        both password not matched
-                    </p>
-                )}
 
                 <form onSubmit={handleSubmit(onSubmit)} autoComplete="off">
                     <div className="row">
@@ -174,11 +188,6 @@ const CollegeRegister = () => {
                                 },
                             })}
                         />
-                        {errors?.full_name && (
-                            <span className="text-[10px] font-semibold text-red-600 mt-1 pl-1 tracking-wider">
-                                {errors?.full_name?.message}
-                            </span>
-                        )}
                     </div>
                     <div className="row">
                         <label htmlFor="email">Email</label>
@@ -197,11 +206,6 @@ const CollegeRegister = () => {
                                 },
                             })}
                         />
-                        {errors?.email && (
-                            <span className="text-[10px] font-semibold text-red-600 mt-1 pl-1 tracking-wider">
-                                {errors?.email?.message}
-                            </span>
-                        )}
                     </div>
                     <div className="row">
                         <label htmlFor="password">Password</label>
@@ -228,11 +232,6 @@ const CollegeRegister = () => {
                                 },
                             })}
                         />
-                        {errors?.password && (
-                            <span className="text-[10px] font-semibold text-red-600 mt-1 pl-1 tracking-wider">
-                                {errors?.password?.message}
-                            </span>
-                        )}
                     </div>
                     <div className="row">
                         <label htmlFor="password">Confirm Password</label>
@@ -247,11 +246,6 @@ const CollegeRegister = () => {
                                 },
                             })}
                         />
-                        {errors?.confirmPassword && (
-                            <span className="text-[10px] font-semibold text-red-600 mt-1 pl-1 tracking-wider">
-                                {errors?.confirmPassword?.message}
-                            </span>
-                        )}
                     </div>
                     
                     <div className="row checkbox-row">
@@ -268,11 +262,6 @@ const CollegeRegister = () => {
                             <span className="checkmark"></span>
                             I accept the terms and conditions
                         </label>
-                        {errors?.termsAccepted && (
-                            <span className="text-[10px] font-semibold text-red-600 mt-1 pl-1 tracking-wider">
-                                {errors?.termsAccepted?.message}
-                            </span>
-                        )}
                     </div>
                     
                     <div className="divider">
@@ -385,7 +374,7 @@ const FormWrapper = styled.div`
     .row {
         display: flex;
         flex-direction: column;
-        margin-bottom: 15px;
+        margin-bottom: 10px;
     }
 
     .row label {
@@ -453,7 +442,7 @@ const FormWrapper = styled.div`
     
     /* Checkbox styling */
     .checkbox-row {
-        margin-bottom: 15px;
+        margin-bottom: 10px;
         display: flex;
         align-items: center;
     }
