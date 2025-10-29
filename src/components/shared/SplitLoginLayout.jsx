@@ -29,7 +29,7 @@ const SplitLoginLayout = ({ children, role, alerts = [] }) => {
   return (
     <Wrapper>
       <div className="container">
-        {/* Left Panel - Branding with Image Slideshow */};
+        {/* Left Panel - Branding with Image Slideshow */}
         <div className="left-panel">
           <div className="slideshow-container">
             <div className="slideshow">
